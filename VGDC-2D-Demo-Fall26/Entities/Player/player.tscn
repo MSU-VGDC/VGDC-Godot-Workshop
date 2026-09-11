@@ -152,11 +152,12 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="Player" type="CharacterBody2D" unique_id=1855739104]
+[node name="Player" type="CharacterBody2D" unique_id=1855739104 node_paths=PackedStringArray("Sprite")]
 texture_filter = 1
 collision_layer = 2
 collision_mask = 17
 script = ExtResource("1_tekja")
+Sprite = NodePath("AnimatedSprite2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1832901614]
 position = Vector2(0, 32)
@@ -165,5 +166,9 @@ shape = SubResource("CapsuleShape2D_f1574")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1622372859]
 sprite_frames = SubResource("SpriteFrames_f1574")
-animation = &"Idle"
-frame_progress = 0.8327821
+animation = &"Attack"
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=253107145]
+zoom = Vector2(0.8, 0.8)
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
