@@ -155,7 +155,6 @@ animations = [{
 [node name="Player" type="CharacterBody2D" unique_id=1855739104 node_paths=PackedStringArray("Sprite")]
 texture_filter = 1
 collision_layer = 2
-collision_mask = 17
 script = ExtResource("1_tekja")
 Sprite = NodePath("AnimatedSprite2D")
 
@@ -169,6 +168,6 @@ sprite_frames = SubResource("SpriteFrames_f1574")
 animation = &"Attack"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=253107145]
-zoom = Vector2(0.8, 0.8)
+zoom = Vector2(0.5, 0.5)
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]

@@ -79,7 +79,7 @@ func _physics_process(delta: float) -> void:
 	_animation_check()
 	move_and_slide()
 
-func _animation_check():
+func _animation_check() -> void:
 	match state:
 		State.IDLE:
 			if Sprite.animation != "Idle":
@@ -91,7 +91,7 @@ func _animation_check():
 			if Sprite.animation != "Attack":
 				Sprite.play("Attack")
 
-func _attack():
+func _attack() -> void:
 	pass
 
 func _animation_finished() -> void:
