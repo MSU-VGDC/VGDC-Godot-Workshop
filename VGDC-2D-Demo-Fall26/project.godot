@@ -16,6 +16,9 @@ config/icon="res://icon.svg"
 
 [display]
 
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/mode=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
@@ -58,10 +61,8 @@ Pause={
 2d_physics/layer_1="Ground"
 2d_physics/layer_2="Player Collision"
 2d_physics/layer_3="Player Hitbox"
-2d_physics/layer_4="Player Hurtbox"
-2d_physics/layer_5="Enemy Collision"
-2d_physics/layer_6="Enemy Hitbox"
-2d_physics/layer_7="Enemy Hurtbox"
+2d_physics/layer_4="Enemy Collision"
+2d_physics/layer_5="Enemy Hitbox"
 
 [physics]
 
