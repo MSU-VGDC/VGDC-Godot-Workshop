@@ -23,14 +23,13 @@ func _recieve_hit(_damage: float, _knockback: float, _direction: Vector2):
 		owner.health -= _damage
 		
 		# Flashing red when hit | can remove if you'd like
-		owner.modulate = "ff0000"
+		owner.find_child("AnimatedSprite2D").modulate = "ff0000"
 		await get_tree().create_timer(0.1).timeout
-		owner.modulate = "ffffff"
+		owner.find_child("AnimatedSprite2D").modulate = "ffffff"
 		
 		# Knockback
 		owner.velocity = _direction * _knockback
 		
 		#*************************************************#
 		# Only write healthbar code after the Hit/Hurtboxes
-		
-		#owner._update_healthbar()
+		owner._update_healthbar()

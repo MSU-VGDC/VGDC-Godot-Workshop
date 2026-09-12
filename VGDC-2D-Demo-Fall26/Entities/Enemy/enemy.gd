@@ -5,7 +5,7 @@ var player: CharacterBody2D
 
 # Movement Variables
 @export var speed: float = 10
-@export var max_health: float = 30
+@export var max_health: float = 25
 @export var acceleration: float = 16
 @export var friction: float = 2
 @export var damage: float = 5
@@ -25,6 +25,8 @@ var player: CharacterBody2D
 @export var hitboxShape: Shape2D
 @export var hitbox_distance: int = 32
 #************#
+# Add after healthbar creation
+@export var Healthbar: TextureProgressBar
 
 # Internal Variables
 const MOVEMENT_MULTIPLIER: float = 16
@@ -49,8 +51,18 @@ func _ready() -> void:
 	#************#
 	# Add after hitbox creation
 	HitboxSpawn.position = Vector2(hitbox_distance,0)
+	#************#
+	# Add after healthbar creation
+	Healthbar.max_value = max_health
+	Healthbar.value = health
 
 func _physics_process(delta: float) -> void:
+	#*************#
+	#ADD After death
+	if health <= 0:
+		_death()
+		return
+	
 	# Check if the player exists or has been encountered
 	if player == null:
 		state = State.WANDER
@@ -96,7 +108,7 @@ func _physics_process(delta: float) -> void:
 				#************#
 				# Add after hitbox creation
 				HitboxSpawn.position = Vector2(-hitbox_distance,0)
-			Cooldown.start(cooldownTime/4)
+			Cooldown.start(cooldownTime/6)
 	else: 
 		direction = Vector2.ZERO
 	
@@ -147,5 +159,18 @@ func _animation_finished() -> void:
 # This is for after the writing of Hitboxes and Hurtboxes
 
 # Death Function
+func _death() -> void:
+	#******#
+	#After Healthbar 
+	Healthbar.visible = false
+	var tween = create_tween()
+	tween.tween_property(self,"modulate:a", 0, 1.5)
+	await get_tree().create_timer(2).timeout
+	queue_free()
 
 # Update Healthbar
+func _update_healthbar() -> void:
+	if health >=0:
+		Healthbar.value = health
+	else:
+		Healthbar.value = 0

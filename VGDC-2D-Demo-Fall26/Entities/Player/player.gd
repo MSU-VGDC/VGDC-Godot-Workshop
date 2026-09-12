@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 # Movement Variables
 @export var speed: float = 20
-@export var max_health: float = 100
+@export var max_health: float = 50
 @export var acceleration: float = 16
 @export var friction: float = 2
 @export var damage: float = 5
@@ -19,6 +19,8 @@ extends CharacterBody2D
 @export var hitboxShape: Shape2D
 @export var hitbox_distance: int = 32
 #************#
+# Add after healthbar creation
+@export var Healthbar: TextureProgressBar
 
 # Internal Variables
 const MOVEMENT_MULTIPLIER: float = 16
@@ -40,8 +42,18 @@ func _ready() -> void:
 	#************#
 	# Add after hitbox creation
 	HitboxSpawn.position = Vector2(hitbox_distance,0)
+	#************#
+	# Add after healthbar creation
+	Healthbar.max_value = max_health
+	Healthbar.value = health
 
 func _physics_process(delta: float) -> void:
+	#*************#
+	#ADD After death
+	if health <= 0:
+		_death()
+		return
+	
 	# Idle Assignment
 	if state != State.ATTACK:
 		state = State.IDLE
@@ -118,10 +130,24 @@ func _attack() -> void:
 func _animation_finished() -> void:
 	if Sprite.animation == "Attack":
 		state = State.IDLE
+		Sprite.play("Idle")
 
 #******************************************#
 # This is for after the writing of Hitboxes and Hurtboxes
 
 # Death Function
+func _death() -> void:
+	#************#
+	# Add after healthbar creation
+	Healthbar.visible = false
+	var tween = create_tween()
+	tween.tween_property(get_parent().get_parent(),"modulate", Color(0.0, 0.0, 0.0), 1.5)
+	await get_tree().create_timer(5).timeout
+	get_tree().reload_current_scene()
 
 # Update Healthbar
+func _update_healthbar() -> void:
+	if health >=0:
+		Healthbar.value = health
+	else:
+		Healthbar.value = 0

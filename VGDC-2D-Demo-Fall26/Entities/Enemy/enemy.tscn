@@ -5,6 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://dqrb0siagxvy5" path="res://Assets/Sprites/Units/Red Units/Warrior/Warrior_Idle.png" id="3_uvcgk"]
 [ext_resource type="Texture2D" uid="uid://cwoo8r61al606" path="res://Assets/Sprites/Units/Red Units/Warrior/Warrior_Run.png" id="4_gyqvw"]
 [ext_resource type="Script" uid="uid://bo2njqlv1ju6p" path="res://Scripts/hurtbox.gd" id="5_uvcgk"]
+[ext_resource type="Texture2D" uid="uid://dk7glcda7pd04" path="res://Assets/Sprites/UI Elements/UI Elements/Health Bars/SmallBarBehind.png" id="6_fpuxb"]
+[ext_resource type="Texture2D" uid="uid://uesbm11n7njh" path="res://Assets/Sprites/UI Elements/UI Elements/Health Bars/SmallBarFront.png" id="7_fwycg"]
+[ext_resource type="Texture2D" uid="uid://bbn3gp12q07gw" path="res://Assets/Sprites/UI Elements/UI Elements/Health Bars/SmallBarFill.png" id="8_xlu5e"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6b1qy"]
 radius = 60.0
@@ -163,7 +166,7 @@ animations = [{
 radius = 25.0
 height = 82.0
 
-[node name="Enemy" type="CharacterBody2D" unique_id=193148300 node_paths=PackedStringArray("Sprite", "Cooldown", "HitboxSpawn")]
+[node name="Enemy" type="CharacterBody2D" unique_id=193148300 node_paths=PackedStringArray("Sprite", "Cooldown", "HitboxSpawn", "Healthbar")]
 texture_filter = 1
 collision_layer = 8
 collision_mask = 9
@@ -174,6 +177,7 @@ Cooldown = NodePath("Timer")
 HitboxSpawn = NodePath("Hitbox Spawn")
 hitboxShape = SubResource("CircleShape2D_6b1qy")
 hitbox_distance = 16
+Healthbar = NodePath("Healthbar")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1048336899]
 position = Vector2(0, 32)
@@ -190,8 +194,7 @@ shape = SubResource("CircleShape2D_f1574")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1343990519]
 sprite_frames = SubResource("SpriteFrames_egd74")
-animation = &"Idle"
-frame_progress = 0.52477556
+animation = &"Attack"
 
 [node name="Timer" type="Timer" parent="." unique_id=345514137]
 one_shot = true
@@ -205,6 +208,15 @@ hostile = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=444585026]
 shape = SubResource("CapsuleShape2D_ie5d1")
+
+[node name="Healthbar" type="TextureProgressBar" parent="." unique_id=1286962394]
+offset_left = -47.0
+offset_top = -73.0
+offset_right = 47.0
+offset_bottom = -54.0
+texture_under = ExtResource("6_fpuxb")
+texture_over = ExtResource("7_fwycg")
+texture_progress = ExtResource("8_xlu5e")
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
