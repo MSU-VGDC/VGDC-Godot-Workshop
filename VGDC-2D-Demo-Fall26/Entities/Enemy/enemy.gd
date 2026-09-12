@@ -5,16 +5,26 @@ var player: CharacterBody2D
 
 # Movement Variables
 @export var speed: float = 10
-@export var max_health: float = 20
+@export var max_health: float = 30
 @export var acceleration: float = 16
 @export var friction: float = 2
 @export var damage: float = 5
 @export var cooldownTime: float = 1
 @export var wanderTime: float = 5
+@export var knockback: float = 32
 
 # Node Variables
 @export var Sprite: AnimatedSprite2D
 @export var Cooldown: Timer
+
+#************#
+# Add after hitbox creation
+
+# Hitbox Variables
+@export var HitboxSpawn: Node2D
+@export var hitboxShape: Shape2D
+@export var hitbox_distance: int = 32
+#************#
 
 # Internal Variables
 const MOVEMENT_MULTIPLIER: float = 16
@@ -36,8 +46,15 @@ func _ready() -> void:
 	health = max_health
 	Sprite.play("Idle")
 	state = State.WANDER
+	#************#
+	# Add after hitbox creation
+	HitboxSpawn.position = Vector2(hitbox_distance,0)
 
 func _physics_process(delta: float) -> void:
+	# Check if the player exists or has been encountered
+	if player == null:
+		state = State.WANDER
+	
 	# Direction and Destination Calculations
 	if state == State.CHASE:
 		if player.global_position.x > global_position.x:
@@ -54,19 +71,31 @@ func _physics_process(delta: float) -> void:
 		if global_position.distance_to(destination) < 40:
 			direction = Vector2.ZERO
 			if state == State.CHASE:
-				if player.global_position.x > global_position.x and Sprite.flip_h:
+				if player.global_position.x > global_position.x and Sprite.flip_h: # Facing Right
 					Sprite.flip_h = false
-				elif player.global_position.x < global_position.x and !Sprite.flip_h:
+					#************#
+					# Add after hitbox creation
+					HitboxSpawn.position = Vector2(hitbox_distance,0)
+				elif player.global_position.x < global_position.x and !Sprite.flip_h: # Facing Left
 					Sprite.flip_h = true
+					#************#
+					# Add after hitbox creation
+					HitboxSpawn.position = Vector2(-hitbox_distance,0)
 				if Cooldown.is_stopped():
 					state = State.ATTACK
 					Cooldown.start(cooldownTime)
 		else:
 			direction = (destination - global_position).normalized()
-			if direction.x > 0 and Sprite.flip_h:
+			if direction.x > 0 and Sprite.flip_h: # Facing Right
 				Sprite.flip_h = false
-			elif direction.x < 0 and !Sprite.flip_h:
+				#************#
+				# Add after hitbox creation
+				HitboxSpawn.position = Vector2(hitbox_distance,0)
+			elif direction.x < 0 and !Sprite.flip_h: # Facing Left
 				Sprite.flip_h = true
+				#************#
+				# Add after hitbox creation
+				HitboxSpawn.position = Vector2(-hitbox_distance,0)
 			Cooldown.start(cooldownTime/4)
 	else: 
 		direction = Vector2.ZERO
@@ -101,7 +130,9 @@ func _animation_check() -> void:
 		Sprite.play("Run")
 
 func _attack() -> void:
-	pass
+	#Hitbox Generation
+	var hitbox = Hitbox.new(damage, knockback * MOVEMENT_MULTIPLIER, 2, 1, 12, hitboxShape, true)
+	HitboxSpawn.add_child(hitbox)
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
@@ -111,3 +142,10 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 func _animation_finished() -> void:
 	if Sprite.animation == "Attack":
 		state = State.CHASE
+
+#******************************************#
+# This is for after the writing of Hitboxes and Hurtboxes
+
+# Death Function
+
+# Update Healthbar

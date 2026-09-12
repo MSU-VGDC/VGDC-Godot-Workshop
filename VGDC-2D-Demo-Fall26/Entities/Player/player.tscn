@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://0lc7xv8tw52j" path="res://Assets/Sprites/Units/Blue Units/Warrior/Warrior_Attack1.png" id="2_5c2io"]
 [ext_resource type="Texture2D" uid="uid://cyji1o05fgxvl" path="res://Assets/Sprites/Units/Blue Units/Warrior/Warrior_Idle.png" id="3_4wf4l"]
 [ext_resource type="Texture2D" uid="uid://17f1kp3d34kj" path="res://Assets/Sprites/Units/Blue Units/Warrior/Warrior_Run.png" id="4_01a4e"]
+[ext_resource type="Script" uid="uid://bo2njqlv1ju6p" path="res://Scripts/hurtbox.gd" id="5_5c2io"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tekja"]
+radius = 60.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f1574"]
 height = 40.0
@@ -152,11 +156,18 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="Player" type="CharacterBody2D" unique_id=1855739104 node_paths=PackedStringArray("Sprite")]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ie5d1"]
+radius = 18.0
+height = 60.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1855739104 node_paths=PackedStringArray("Sprite", "HitboxSpawn")]
 texture_filter = 1
 collision_layer = 2
 script = ExtResource("1_tekja")
 Sprite = NodePath("AnimatedSprite2D")
+HitboxSpawn = NodePath("Hitbox Spawn")
+hitboxShape = SubResource("CircleShape2D_tekja")
+hitbox_distance = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1832901614]
 position = Vector2(0, 32)
@@ -165,9 +176,19 @@ shape = SubResource("CapsuleShape2D_f1574")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1622372859]
 sprite_frames = SubResource("SpriteFrames_f1574")
-animation = &"Attack"
+animation = &"Idle"
+frame_progress = 0.56127125
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=253107145]
 zoom = Vector2(0.5, 0.5)
+position_smoothing_enabled = true
+
+[node name="Hitbox Spawn" type="Node2D" parent="." unique_id=1884301095]
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1633943678]
+script = ExtResource("5_5c2io")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=313114318]
+shape = SubResource("CapsuleShape2D_ie5d1")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]

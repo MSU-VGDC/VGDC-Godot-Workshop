@@ -6,9 +6,19 @@ extends CharacterBody2D
 @export var acceleration: float = 16
 @export var friction: float = 2
 @export var damage: float = 5
+@export var knockback: float = 18
 
 # Node Variables
 @export var Sprite: AnimatedSprite2D
+
+#************#
+# Add after hitbox creation
+
+# Hitbox Variables
+@export var HitboxSpawn: Node2D
+@export var hitboxShape: Shape2D
+@export var hitbox_distance: int = 32
+#************#
 
 # Internal Variables
 const MOVEMENT_MULTIPLIER: float = 16
@@ -27,6 +37,9 @@ func _ready() -> void:
 	health = max_health
 	Sprite.play("Idle")
 	state = State.IDLE
+	#************#
+	# Add after hitbox creation
+	HitboxSpawn.position = Vector2(hitbox_distance,0)
 
 func _physics_process(delta: float) -> void:
 	# Idle Assignment
@@ -51,9 +64,15 @@ func _physics_process(delta: float) -> void:
 		if direction.x > 0: #Facing Right
 			if Sprite.flip_h:
 				Sprite.flip_h = false
+				#************#
+				# Add after hitbox creation
+				HitboxSpawn.position = Vector2(hitbox_distance,0)
 		else: #Facing Left
 			if !Sprite.flip_h:
 				Sprite.flip_h = true
+				#************#
+				# Add after hitbox creation
+				HitboxSpawn.position = Vector2(-hitbox_distance,0)
 	else:
 		velocity.x = move_toward(velocity.x, 0, acceleration * friction)
 	
@@ -92,8 +111,17 @@ func _animation_check() -> void:
 				Sprite.play("Attack")
 
 func _attack() -> void:
-	pass
+	#Hitbox Generation
+	var hitbox = Hitbox.new(damage, knockback * MOVEMENT_MULTIPLIER, 2, 1, 12, hitboxShape, false)
+	HitboxSpawn.add_child(hitbox)
 
 func _animation_finished() -> void:
 	if Sprite.animation == "Attack":
 		state = State.IDLE
+
+#******************************************#
+# This is for after the writing of Hitboxes and Hurtboxes
+
+# Death Function
+
+# Update Healthbar

@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://8k0fi34njar1" path="res://Assets/Sprites/Units/Red Units/Warrior/Warrior_Attack1.png" id="2_6b1qy"]
 [ext_resource type="Texture2D" uid="uid://dqrb0siagxvy5" path="res://Assets/Sprites/Units/Red Units/Warrior/Warrior_Idle.png" id="3_uvcgk"]
 [ext_resource type="Texture2D" uid="uid://cwoo8r61al606" path="res://Assets/Sprites/Units/Red Units/Warrior/Warrior_Run.png" id="4_gyqvw"]
+[ext_resource type="Script" uid="uid://bo2njqlv1ju6p" path="res://Scripts/hurtbox.gd" id="5_uvcgk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6b1qy"]
+radius = 60.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f1574"]
 height = 40.0
@@ -155,13 +159,21 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="Enemy" type="CharacterBody2D" unique_id=193148300 node_paths=PackedStringArray("Sprite", "Cooldown")]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ie5d1"]
+radius = 25.0
+height = 82.0
+
+[node name="Enemy" type="CharacterBody2D" unique_id=193148300 node_paths=PackedStringArray("Sprite", "Cooldown", "HitboxSpawn")]
 texture_filter = 1
-collision_layer = 16
-collision_mask = 17
+collision_layer = 8
+collision_mask = 9
 script = ExtResource("1_egd74")
+knockback = 35.0
 Sprite = NodePath("AnimatedSprite2D")
 Cooldown = NodePath("Timer")
+HitboxSpawn = NodePath("Hitbox Spawn")
+hitboxShape = SubResource("CircleShape2D_6b1qy")
+hitbox_distance = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1048336899]
 position = Vector2(0, 32)
@@ -178,12 +190,21 @@ shape = SubResource("CircleShape2D_f1574")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1343990519]
 sprite_frames = SubResource("SpriteFrames_egd74")
-animation = &"Attack"
-frame = 2
+animation = &"Idle"
+frame_progress = 0.52477556
 
 [node name="Timer" type="Timer" parent="." unique_id=345514137]
 one_shot = true
 autostart = true
+
+[node name="Hitbox Spawn" type="Node2D" parent="." unique_id=1216310961]
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1351755092]
+script = ExtResource("5_uvcgk")
+hostile = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=444585026]
+shape = SubResource("CapsuleShape2D_ie5d1")
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_animation_finished"]
