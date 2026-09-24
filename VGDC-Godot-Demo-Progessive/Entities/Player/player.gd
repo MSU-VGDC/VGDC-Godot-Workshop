@@ -37,6 +37,7 @@ func _physics_process(delta: float) -> void:
 	var direction = Vector2.ZERO
 	direction.x = Input.get_axis("MoveLeft","MoveRight")
 	direction.y = Input.get_axis("MoveUp", "MoveDown")
+	direction = direction.normalized()
 	
 	# L/R Movement
 	if direction.x != 0 and state != State.ATTACK:

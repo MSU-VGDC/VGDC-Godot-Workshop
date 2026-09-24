@@ -1,8 +1,9 @@
 [gd_scene format=4 uid="uid://bg422wq2sinkw"]
 
-[ext_resource type="Texture2D" uid="uid://3jig7y4ghbe6" path="res://Demo Assets/Tileset/Water Background color.png" id="1_fj7yv"]
-[ext_resource type="TileSet" uid="uid://dsvm1jn1tnygk" path="res://Demo Assets/Tileset/TileSet.tres" id="2_tlwt5"]
+[ext_resource type="Texture2D" uid="uid://3jig7y4ghbe6" path="res://Assets/Tileset/Water Background color.png" id="1_fj7yv"]
+[ext_resource type="TileSet" uid="uid://dsvm1jn1tnygk" path="res://Assets/Tileset/TileSet.tres" id="2_tlwt5"]
 [ext_resource type="PackedScene" uid="uid://1pndpincowal" path="res://Entities/Player/player.tscn" id="3_tlwt5"]
+[ext_resource type="PackedScene" uid="uid://t4k73i1855dr" path="res://Entities/Enemy/enemy.tscn" id="4_aqk2v"]
 
 [node name="World" type="Node2D" unique_id=842225084]
 texture_filter = 1
@@ -19,3 +20,6 @@ tile_set = ExtResource("2_tlwt5")
 y_sort_enabled = true
 
 [node name="Player" parent="Entities" unique_id=1082572635 instance=ExtResource("3_tlwt5")]
+
+[node name="Enemy" parent="Entities" unique_id=716080117 instance=ExtResource("4_aqk2v")]
+position = Vector2(-474, -336)
