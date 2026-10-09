@@ -23,3 +23,9 @@ y_sort_enabled = true
 
 [node name="Enemy" parent="Entities" unique_id=716080117 instance=ExtResource("4_aqk2v")]
 position = Vector2(-474, -336)
+
+[node name="Enemy2" parent="Entities" unique_id=1808160081 instance=ExtResource("4_aqk2v")]
+position = Vector2(-109, -539)
+
+[node name="Enemy3" parent="Entities" unique_id=371358188 instance=ExtResource("4_aqk2v")]
+position = Vector2(-443, 72)

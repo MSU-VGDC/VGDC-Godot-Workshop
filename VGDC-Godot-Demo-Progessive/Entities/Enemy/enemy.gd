@@ -16,6 +16,12 @@ var player: CharacterBody2D
 @export var Sprite: AnimatedSprite2D
 @export var Cooldown: Timer
 
+# Hitbox Variables
+@export var HitboxSpawn: Node2D
+@export var hitboxShape: Shape2D
+@export var hitbox_distance: int = 32
+@export var Healthbar: TextureProgressBar
+
 # Internal Variables
 const MOVEMENT_MULTIPLIER: float = 16
 var health: float
@@ -35,8 +41,16 @@ func _ready() -> void:
 	health = max_health
 	Sprite.play("Idle")
 	state = State.WANDER
+	HitboxSpawn.position = Vector2(hitbox_distance, 0)
+	Healthbar.max_value = max_health
+	Healthbar.value = health
 
+@warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
+	if health <= 0:
+		_death()
+		return
+	
 	# Check for player
 	if player == null:
 		state = State.WANDER
@@ -58,8 +72,10 @@ func _physics_process(delta: float) -> void:
 			if state == State.CHASE:
 				if player.global_position.x > global_position.x and Sprite.flip_h: # Facing Right
 					Sprite.flip_h = false
+					HitboxSpawn.position = Vector2(hitbox_distance, 0)
 				elif player.global_position.x < global_position.x and !Sprite.flip_h: # Facing Left
 					Sprite.flip_h = true
+					HitboxSpawn.position = Vector2(-hitbox_distance, 0)
 				if Cooldown.is_stopped():
 					state = State.ATTACK
 					Cooldown.start(cooldownTime)
@@ -67,8 +83,10 @@ func _physics_process(delta: float) -> void:
 			direction = (destination - global_position).normalized()
 			if direction.x > 0 and Sprite.flip_h: #Facing Right
 				Sprite.flip_h = false
+				HitboxSpawn.position = Vector2(hitbox_distance, 0)
 			elif direction.x <0 and !Sprite.flip_h: #Facing left
 				Sprite.flip_h = true
+				HitboxSpawn.position = Vector2(-hitbox_distance, 0)
 			Cooldown.start(cooldownTime/6)
 	else:
 		direction = Vector2.ZERO
@@ -100,7 +118,8 @@ func _animation_check() -> void:
 		Sprite.play("Run")
 
 func _attack() -> void:
-	pass
+	var hitbox = Hitbox.new(damage, knockback * MOVEMENT_MULTIPLIER, 2, 1, 12, hitboxShape, true)
+	HitboxSpawn.add_child(hitbox)
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
@@ -109,4 +128,18 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 func _animation_finished() -> void:
 	if Sprite.animation == "Attack":
+		Sprite.play("Run")
 		state = State.CHASE
+
+func _death() -> void:
+	Healthbar.visible = false
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0, 1.5)
+	await get_tree().create_timer(2).timeout
+	queue_free()
+
+func _update_healthbar() -> void:
+	if health >=0:
+		Healthbar.value = health
+	else:
+		Healthbar.value = 0

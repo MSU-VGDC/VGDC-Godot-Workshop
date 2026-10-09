@@ -7,8 +7,14 @@ extends CharacterBody2D
 @export var damage: float = 5
 @export var knockback: float = 18
 
-# NOde Variable
+# Node Variable
 @export var Sprite: AnimatedSprite2D
+
+# hitbox variables
+@export var HitboxSpawn: Node2D
+@export var hitboxShape: Shape2D
+@export var hitbox_distance: int = 32
+@export var Healthbar: TextureProgressBar
 
 # Internal Variables
 const MOVEMENT_MULTIPLIER: float = 16
@@ -27,8 +33,16 @@ func _ready() -> void:
 	health = max_health
 	Sprite.play("Idle")
 	state = State.IDLE
+	HitboxSpawn.position = Vector2(hitbox_distance, 0)
+	Healthbar.max_value = max_health
+	Healthbar.value = health
 
+@warning_ignore("unused_parameter")
 func _physics_process(delta: float) -> void:
+	if health <= 0:
+		_death()
+		return
+	
 	# Idle Assignment
 	if state != State.ATTACK:
 		state = State.IDLE
@@ -51,9 +65,11 @@ func _physics_process(delta: float) -> void:
 		if direction.x>0:# Facing Right
 			if Sprite.flip_h:
 				Sprite.flip_h = false
+				HitboxSpawn.position = Vector2(hitbox_distance, 0)
 		else: #facing left
 			if !Sprite.flip_h:
 				Sprite.flip_h = true
+				HitboxSpawn.position = Vector2(-hitbox_distance, 0)
 	else:
 		velocity.x = move_toward(velocity.x, 0, acceleration)
 	
@@ -90,9 +106,23 @@ func _animation_check() -> void:
 				Sprite.play("Attack")
 
 func _attack() -> void:
-	pass
+	var hitbox = Hitbox.new(damage, knockback * MOVEMENT_MULTIPLIER, 2, 1, 12, hitboxShape, false)
+	HitboxSpawn.add_child(hitbox)
 
 func _animation_finished() -> void:	
 	if Sprite.animation == "Attack":
 		state = State.IDLE
 		Sprite.play("Idle")
+
+func _death() -> void:
+	Healthbar.visible = false
+	var tween = create_tween()
+	tween.tween_property(get_parent().get_parent(), "modulate", Color(0,0,0), 1.5)
+	await get_tree().create_timer(5).timeout
+	get_tree().reload_current_scene()
+
+func _update_healthbar() -> void:
+	if health >=0:
+		Healthbar.value = health
+	else:
+		Healthbar.value = 0
